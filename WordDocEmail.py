@@ -64,7 +64,7 @@ def main():
         del msg  # Delete the object as you iterate through the loop.
 
         # Terminate the SMTP session and close the connection
-        server.quit()
+        #server.quit()
 
 if __name__ == '__main__':
     main()
