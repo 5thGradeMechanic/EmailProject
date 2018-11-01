@@ -10,9 +10,9 @@ def get_respondents(filename):                                           #contac
     vendors = []
     with open(filename, mode='r', encoding='utf-8') as contacts_file:    #open the file, and reach each line.
         for a_contact in contacts_file:                                  #split each line(contact) into a name and email.
-            names.append(a_contact.split()[0])
-            emails.append(a_contact.split()[1])
-            vendors.extend(a_contact.split()[2])
+            names.append(a_contact.split(',')[0])
+            emails.append(a_contact.split(',')[1])
+            vendors.append("\n- ".join(a_contact.split(',')[2].split('|')))
 
     return names, emails, vendors                                                 #return three lists
 
@@ -27,14 +27,28 @@ def read_template(filename):
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import time
 
-MY_ADDRESS = 'fortresstest489@gmail.com'
-PASSWORD = 'P@sswot123'
+#----- Authentication Method -----
+MY_ADDRESS = input("What is your email?")
+type(MY_ADDRESS)
+
+#Password Input
+PASSWORD=input("What is your password?")
+type(PASSWORD)
+def getPass(filename):
+    with open(filename, 'r', encoding='utf-8') as template_file:
+        template_file_content = template_file.read()                     #Adds the contents of the template file to an object, which is then returned.
+    return Template(template_file_content)
 
 def main():
     #File Fetches
     names, emails, vendors = get_respondents('C:/Users/mwhitenett/Documents/Security/Scripts/mycontacts.txt')
     message_template = read_template('C:/Users/mwhitenett/Documents/Security/Scripts/message.txt')
+
+    #Variables:
+    #cc_email = "aep.tprg@fortressinfosec.com; tprg@aep.com; gornes@fortressinfosec.com"
+    cc_email = "mwhitenett@fortressinfosec.com"
 
     # Setup the SMTP server
     server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -54,19 +68,19 @@ def main():
         # Setup the message parameters
         msg['From'] = MY_ADDRESS  # This may change to a default Fortress/AEP email.
         msg['To'] = email
-        msg['Subject'] = "This is a test"  # This will change to "Annual Vendor Review
+        msg['CC'] = cc_email
+        msg['Subject'] = "Third Party Risk Governance Annual Vendor Review - " + vendor.split("\n")[0]
 
         # Add in the message body
-        msg.attach(MIMEText(message, 'plain'))
+        msg.attach(MIMEText(message))
+
+        #Send emails 20 seconds apart to avoid SPAM filters
+        time.sleep(5)
 
         # Send the message via the server set up earlier
-        #server.send_message(msg)
-        del msg  # Delete the object as you iterate through the loop.
+        server.send_message(msg)
 
-        # Terminate the SMTP session and close the connection
-        #server.quit()
+        del msg  # Delete the object as you iterate through the loop.
 
 if __name__ == '__main__':
     main()
-
-#Need to figure out how to pull each vendor for each contact
