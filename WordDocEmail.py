@@ -47,8 +47,7 @@ def main():
     message_template = read_template('C:/Users/mwhitenett/Documents/Security/Scripts/message.txt')
 
     #Variables:
-    #cc_email = "aep.tprg@fortressinfosec.com; tprg@aep.com; gornes@fortressinfosec.com"
-    cc_email = "mwhitenett@fortressinfosec.com"
+    cc_email = "email@companyname.com"
 
     # Setup the SMTP server
     server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -66,7 +65,7 @@ def main():
         print(message)
 
         # Setup the message parameters
-        msg['From'] = MY_ADDRESS  # This may change to a default Fortress/AEP email.
+        msg['From'] = MY_ADDRESS  # This may change to a default company/customer email.
         msg['To'] = email
         msg['CC'] = cc_email
         msg['Subject'] = "Third Party Risk Governance Annual Vendor Review - " + vendor.split("\n")[0]
